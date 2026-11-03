@@ -1,0 +1,66 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Pre-Order We the 92%</title>
+<link href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,600;1,400;1,600&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root { --ink:#0E0505; --crimson:#8B1A1A; --gold:#C4922A; --white:#FFFFFF; }
+  *,*::before,*::after { margin:0; padding:0; box-sizing:border-box; }
+  html,body { height:100%; }
+  body { font-family:'Inter',sans-serif; background:var(--ink); color:var(--white); -webkit-font-smoothing:antialiased; overflow:hidden; }
+  .banner { position:relative; height:100%; display:flex; align-items:center; overflow:hidden; }
+  .glow { position:absolute; inset:0; pointer-events:none;
+    background: radial-gradient(ellipse 60% 60% at 20% 45%, rgba(139,26,26,.22) 0%, transparent 70%),
+                radial-gradient(ellipse 40% 40% at 85% 70%, rgba(196,146,42,.08) 0%, transparent 60%); }
+  .inner { position:relative; z-index:1; width:100%; max-width:1180px; margin:0 auto; padding:32px 40px;
+    display:grid; grid-template-columns:minmax(220px,380px) 1fr; gap:56px; align-items:center; }
+  .cover { width:100%; height:auto; display:block; filter:drop-shadow(0 24px 50px rgba(0,0,0,.6)); }
+  .eyebrow { font-size:11px; letter-spacing:.28em; text-transform:uppercase; color:var(--gold); font-weight:600; margin-bottom:16px; }
+  h1 { font-family:'EB Garamond',serif; font-weight:600; font-size:clamp(28px,3.4vw,46px); line-height:1.12; margin-bottom:16px; }
+  h1 em { color:var(--gold); font-style:italic; }
+  .body { font-size:15px; line-height:1.7; color:rgba(255,255,255,.66); max-width:540px; margin-bottom:18px; }
+  .meta { font-size:12px; font-weight:600; letter-spacing:.14em; text-transform:uppercase; color:var(--gold); opacity:.85; margin-bottom:24px; }
+  .actions { display:flex; gap:14px; flex-wrap:wrap; }
+  .btn { display:inline-flex; align-items:center; gap:8px; font-size:13px; letter-spacing:.1em; text-transform:uppercase;
+    padding:15px 28px; border-radius:3px; text-decoration:none; transition:opacity .2s, transform .15s, border-color .2s, background .2s; }
+  .btn-gold { background:var(--gold); color:var(--ink); font-weight:700; }
+  .btn-gold:hover { opacity:.88; transform:translateY(-1px); }
+  .btn-ghost { border:1px solid rgba(255,255,255,.25); color:rgba(255,255,255,.85); font-weight:500; }
+  .btn-ghost:hover { border-color:rgba(196,146,42,.6); background:rgba(196,146,42,.08); }
+  @media (max-width:760px) {
+    .inner { grid-template-columns:1fr; gap:24px; padding:28px 20px; text-align:center; }
+    .cover { max-width:220px; margin:0 auto; }
+    .body { margin-left:auto; margin-right:auto; }
+    .actions { justify-content:center; }
+  }
+</style>
+</head>
+<body>
+<section class="banner">
+  <div class="glow"></div>
+  <div class="inner">
+    <div><img id="cover" class="cover" alt="We the 92%: An Anthology of Black Women's Witness, hardcover"></div>
+    <div>
+      <p class="eyebrow">Now Available for Pre-Order</p>
+      <h1>Black women wrote through this. <em>Every word of it.</em></h1>
+      <p class="body">Nearly 100 voices. Essays, prayers, open letters, and reflections capturing grief, clarity, exhaustion, faith, resistance, and resolve. Born in the aftermath of the 2024 election, <em>We the 92%</em> is a living archive of civic and spiritual witness.</p>
+      <p class="meta">Released in time for the holidays</p>
+      <div class="actions">
+        <a class="btn btn-gold" href="https://pci.jotform.com/form/263064767792066" target="_blank" rel="noopener">Pre-Order the Book &middot; $40</a>
+        <a class="btn btn-ghost" href="https://pci.jotform.com/form/253086657312055" target="_blank" rel="noopener">Shop Merch</a>
+      </div>
+    </div>
+  </div>
+</section>
+<script>
+  // Use the same cover image as the full pre-order page, so there is one place to update it.
+  fetch('preorder.html').then(function (r) { return r.text(); }).then(function (html) {
+    var doc = new DOMParser().parseFromString(html, 'text/html');
+    var img = doc.querySelector('.book-cover-img');
+    if (img) document.getElementById('cover').src = img.getAttribute('src');
+  }).catch(function () {});
+</script>
+</body>
+</html>
