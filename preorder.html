@@ -1961,6 +1961,98 @@
 
 </script>
 
+<!-- Embed mode: wethe92.com stacks parts of this page, e.g. preorder.html?only=shorts -->
+<style>
+  html.embed body { padding-top: 0; }
+  html.embed .authors-grid { justify-content: center !important; }
+  html.embed .author-popup.flip { bottom: auto; top: calc(100% + 12px); }
+  html.embed .author-popup.flip::after { top: auto; bottom: 100%; border-top-color: transparent; border-bottom-color: var(--ink); }
+  @media (max-width: 640px) {
+    html.embed .authors-grid { gap: 10px !important; justify-content: center !important; }
+    html.embed .author-card { width: calc((100% - 20px) / 3) !important; flex: 0 0 calc((100% - 20px) / 3) !important; }
+    html.embed .author-img-wrap { width: 100% !important; height: auto !important; aspect-ratio: 1 / 1; }
+    html.embed .author-img-wrap img.author-img { width: 100% !important; height: 100% !important; }
+    html.embed .author-name { font-size: 12.5px; }
+    html.embed .author-popup { width: 240px; }
+    html.embed #contributors { padding-left: 14px; padding-right: 14px; }
+  }
+</style>
+<script>
+(function () {
+  var q = new URLSearchParams(location.search);
+  var only = q.get('only');
+
+  // Keep hover bubbles inside the visible frame: shift sideways near edges, flip below near the top.
+  function placePopup(card) {
+    var pop = card.querySelector('.author-popup');
+    if (!pop) return;
+    pop.classList.remove('flip');
+    pop.style.left = ''; pop.style.transform = '';
+    var r = card.getBoundingClientRect(), pw = pop.offsetWidth, ph = pop.offsetHeight, vw = document.documentElement.clientWidth;
+    var left = r.left + r.width / 2 - pw / 2;
+    left = Math.max(8, Math.min(left, vw - pw - 8));
+    pop.style.left = (left - r.left) + 'px';
+    pop.style.transform = 'none';
+    if (only && r.top - ph - 16 < 0) pop.classList.add('flip');
+  }
+  document.querySelectorAll('.author-card').forEach(function (c) {
+    c.addEventListener('mouseenter', function () { placePopup(c); });
+    c.addEventListener('touchstart', function () { placePopup(c); }, { passive: true });
+  });
+
+  if (!only) return;
+  var keep = only.split(',');
+  document.documentElement.classList.add('embed');
+  var nav = document.querySelector('body > nav');
+  if (nav) nav.style.display = 'none';
+  document.querySelectorAll('body > section, body > footer').forEach(function (s) {
+    var id = s.id || s.tagName.toLowerCase();
+    if (keep.indexOf(id) < 0) s.style.display = 'none';
+  });
+
+  // Split the timeline in two halves: ?tl=1 or ?tl=2
+  var tl = q.get('tl'), T = document.getElementById('timeline');
+  if (tl && T) {
+    ['.tl-left', '.tl-right'].forEach(function (sel) {
+      var ev = [].slice.call(T.querySelectorAll(sel + ' .tl-event')), h = Math.ceil(ev.length / 2);
+      ev.forEach(function (e, i) { if ((tl === '1') !== (i < h)) e.style.display = 'none'; });
+    });
+    if (tl === '1') T.style.paddingBottom = '0';
+    else {
+      T.style.paddingTop = '0';
+      T.querySelector('.sec-head').style.display = 'none';
+      var th = T.querySelector('.track-headers'); if (th) th.style.display = 'none';
+    }
+  }
+
+  // Split the contributors into parts of 30: ?c=1, 2 or 3
+  var c = parseInt(q.get('c') || '0', 10), C = document.getElementById('contributors');
+  if (c && C) {
+    var cards = [].slice.call(C.querySelectorAll('.author-card')), per = 30, last = Math.ceil(cards.length / per);
+    cards.forEach(function (el, i) { if (Math.floor(i / per) + 1 !== c) el.style.display = 'none'; });
+    if (c > 1) { C.querySelector('.sec-head').style.display = 'none'; C.style.paddingTop = '24px'; }
+    if (c < last) {
+      C.style.paddingBottom = '24px';
+      var note = C.querySelector('.contributors-note'); if (note) note.style.display = 'none';
+    }
+  }
+
+  // Footer links point at the other wethe92.com pages.
+  var fn = document.querySelector('.footer-nav');
+  if (fn) {
+    fn.innerHTML = '';
+    [['Events', 'https://www.wethe92.com/events'], ['Support', 'https://www.wethe92.com/support'],
+     ['Contact', 'https://www.wethe92.com/contact'], ['Pre-Order', 'https://pci.jotform.com/form/263064767792066'],
+     ['Contributor Login', 'https://www.wethe92.com/contributors-private']].forEach(function (l) {
+      var li = document.createElement('li'), a = document.createElement('a');
+      a.textContent = l[0]; a.href = l[1]; a.target = l[0] === 'Pre-Order' ? '_blank' : '_top';
+      if (l[0] === 'Pre-Order') a.rel = 'noopener';
+      li.appendChild(a); fn.appendChild(li);
+    });
+  }
+})();
+</script>
+
 </body>
 </html>
 
