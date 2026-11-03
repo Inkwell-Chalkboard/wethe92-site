@@ -1,0 +1,135 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Contributors · We the 92%</title>
+<link href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,600;1,400&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root { --ink:#0E0505; --crimson:#8B1A1A; --gold:#C4922A; --parchment:#EDE6D8; --text:#2C1810; --muted:#6B5040; }
+  *,*::before,*::after { margin:0; padding:0; box-sizing:border-box; }
+  html,body { height:100%; }
+  body { font-family:'Inter',sans-serif; background:var(--parchment); color:var(--text); -webkit-font-smoothing:antialiased; overflow:hidden; }
+  .wrap { height:100%; display:flex; flex-direction:column; max-width:1100px; margin:0 auto; padding:36px 28px 24px; }
+  .head { text-align:center; margin-bottom:22px; }
+  .eyebrow { font-size:11px; letter-spacing:.28em; text-transform:uppercase; font-weight:700; color:var(--crimson); margin-bottom:10px; }
+  h2 { font-family:'EB Garamond',serif; font-weight:600; font-size:clamp(26px,3vw,38px); line-height:1.15; }
+  .rule { width:44px; height:2px; background:var(--gold); margin:14px auto 0; }
+  .stage { display:flex; align-items:center; gap:12px; }
+  .grid { flex:1; display:grid; gap:14px; }
+  .card { cursor:pointer; text-align:center; outline:none; }
+  .ph { aspect-ratio:1/1; border-radius:8px; overflow:hidden; background:linear-gradient(135deg,#3a0c0c,#1a0505);
+        display:flex; align-items:center; justify-content:center; transition:transform .2s, box-shadow .2s; }
+  .ph img { width:100%; height:100%; object-fit:cover; display:block; }
+  .ph span { font-family:'EB Garamond',serif; font-size:24px; font-weight:600; color:rgba(196,146,42,.55); }
+  .card.lum .ph { box-shadow:0 0 0 2px rgba(196,146,42,.45); }
+  .card:hover .ph, .card.on .ph, .card:focus-visible .ph { transform:scale(1.03); box-shadow:0 0 0 2px var(--crimson); }
+  .nm { font-family:'EB Garamond',serif; font-size:14px; line-height:1.25; margin-top:7px; }
+  .card.lum .nm { color:var(--crimson); font-weight:600; }
+  .arrow { flex:0 0 40px; height:40px; border-radius:50%; border:1px solid rgba(44,24,16,.2); background:#fff;
+           font-size:20px; color:var(--text); cursor:pointer; transition:background .2s, border-color .2s; }
+  .arrow:hover { border-color:var(--gold); background:#fffaf0; }
+  .arrow:disabled { opacity:.3; cursor:default; }
+  .pager { text-align:center; font-size:12px; letter-spacing:.08em; color:var(--muted); margin:14px 0 12px; }
+  .detail { background:var(--ink); color:#fff; border-radius:10px; padding:16px 20px; min-height:104px; }
+  .d-name { font-family:'EB Garamond',serif; font-size:19px; color:var(--gold); font-weight:600; }
+  .d-cred { font-size:10.5px; letter-spacing:.08em; text-transform:uppercase; color:rgba(255,255,255,.45); margin:3px 0 7px; }
+  .d-bio { font-size:13.5px; line-height:1.6; color:rgba(255,255,255,.75); }
+  .hint { color:rgba(255,255,255,.5); font-size:13.5px; line-height:1.6; }
+  @media (max-width:640px) {
+    .wrap { padding:28px 14px 18px; }
+    .arrow { flex-basis:32px; height:32px; font-size:16px; }
+    .stage { gap:6px; }
+    .grid { gap:10px; }
+    .nm { font-size:12.5px; }
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="head">
+    <p class="eyebrow">Nearly 100 Voices</p>
+    <h2>The Contributors</h2>
+    <div class="rule"></div>
+  </div>
+  <div class="stage">
+    <button class="arrow" id="prev" aria-label="Previous contributors">&#8249;</button>
+    <div class="grid" id="grid"></div>
+    <button class="arrow" id="next" aria-label="More contributors">&#8250;</button>
+  </div>
+  <p class="pager" id="pager"></p>
+  <div class="detail" id="detail"><p class="hint">Hover over a photo, or tap it on your phone, to read about each contributor.</p></div>
+</div>
+<script>
+(function () {
+  var people = [], page = 0, perPage = 12, cols = 6;
+  var grid = document.getElementById('grid'), detail = document.getElementById('detail');
+
+  function layout() {
+    var w = window.innerWidth;
+    if (w < 420) { cols = 3; perPage = 6; }
+    else if (w < 640) { cols = 4; perPage = 8; }
+    else if (w < 900) { cols = 5; perPage = 10; }
+    else { cols = 6; perPage = 12; }
+    grid.style.gridTemplateColumns = 'repeat(' + cols + ', 1fr)';
+  }
+
+  function show(p) {
+    detail.innerHTML = '';
+    var n = document.createElement('p'); n.className = 'd-name'; n.textContent = p.name;
+    var c = document.createElement('p'); c.className = 'd-cred'; c.textContent = p.cred;
+    var b = document.createElement('p'); b.className = 'd-bio'; b.textContent = p.bio;
+    detail.appendChild(n); if (p.cred) detail.appendChild(c); if (p.bio) detail.appendChild(b);
+  }
+
+  function render() {
+    var pages = Math.max(1, Math.ceil(people.length / perPage));
+    if (page >= pages) page = pages - 1;
+    grid.innerHTML = '';
+    people.slice(page * perPage, page * perPage + perPage).forEach(function (p) {
+      var card = document.createElement('div');
+      card.className = 'card' + (p.lum ? ' lum' : '');
+      card.tabIndex = 0;
+      var ph = document.createElement('div'); ph.className = 'ph';
+      if (p.img) { var im = document.createElement('img'); im.src = p.img; im.alt = p.name; if (p.pos) im.style.objectPosition = p.pos; ph.appendChild(im); }
+      else { var s = document.createElement('span'); s.textContent = p.initials; ph.appendChild(s); }
+      var nm = document.createElement('p'); nm.className = 'nm'; nm.textContent = p.name;
+      card.appendChild(ph); card.appendChild(nm);
+      function pick() { [].forEach.call(grid.children, function (c) { c.classList.remove('on'); }); card.classList.add('on'); show(p); }
+      card.addEventListener('mouseenter', pick);
+      card.addEventListener('click', pick);
+      card.addEventListener('focus', pick);
+      grid.appendChild(card);
+    });
+    document.getElementById('pager').textContent = (page + 1) + ' of ' + pages + '  ·  ' + people.length + ' contributors';
+    document.getElementById('prev').disabled = page === 0;
+    document.getElementById('next').disabled = page >= pages - 1;
+  }
+
+  document.getElementById('prev').onclick = function () { page--; render(); };
+  document.getElementById('next').onclick = function () { page++; render(); };
+  window.addEventListener('resize', function () { var old = perPage; layout(); if (old !== perPage) render(); });
+
+  // Contributor photos and bios live in the full pre-order page; read them from there.
+  fetch('preorder.html').then(function (r) { return r.text(); }).then(function (html) {
+    var doc = new DOMParser().parseFromString(html, 'text/html');
+    doc.querySelectorAll('#contributors .author-card').forEach(function (c) {
+      var img = c.querySelector('img.author-img');
+      var q = function (s) { var e = c.querySelector(s); return e ? e.textContent.trim() : ''; };
+      var name = q('.author-name') || q('.popup-name');
+      var ini = c.querySelector('.author-initials');
+      people.push({
+        name: name, cred: q('.popup-cred'), bio: q('.popup-bio'),
+        img: img ? img.getAttribute('src') : '',
+        pos: img ? img.style.objectPosition : '',
+        initials: ini ? ini.textContent.trim() : name.split(/\s+/).map(function (w) { return w[0]; }).join('').slice(0, 2),
+        lum: c.classList.contains('luminary')
+      });
+    });
+    layout(); render();
+  });
+  layout();
+})();
+</script>
+</body>
+</html>
