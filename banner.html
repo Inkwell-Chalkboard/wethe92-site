@@ -22,7 +22,8 @@
   h1 em { color:var(--gold); font-style:italic; }
   .body { font-size:15px; line-height:1.7; color:rgba(255,255,255,.66); max-width:540px; margin-bottom:18px; }
   .meta { font-size:12px; font-weight:600; letter-spacing:.14em; text-transform:uppercase; color:var(--gold); opacity:.85; margin-bottom:24px; }
-  .actions { display:flex; gap:14px; flex-wrap:wrap; }
+  .actions { display:flex; flex-direction:column; align-items:flex-start; gap:12px; }
+  .actions .btn { width:280px; justify-content:center; }
   .btn { display:inline-flex; align-items:center; gap:8px; font-size:13px; letter-spacing:.1em; text-transform:uppercase;
     padding:15px 28px; border-radius:3px; text-decoration:none; transition:opacity .2s, transform .15s, border-color .2s, background .2s; }
   .btn-gold { background:var(--gold); color:var(--ink); font-weight:700; }
@@ -33,7 +34,7 @@
     .inner { grid-template-columns:1fr; gap:24px; padding:28px 20px; text-align:center; }
     .cover { max-width:220px; margin:0 auto; }
     .body { margin-left:auto; margin-right:auto; }
-    .actions { justify-content:center; }
+    .actions { align-items:center; }
   }
 </style>
 </head>
